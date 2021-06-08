@@ -75,7 +75,7 @@ func parseCsv(filepath string) []string {
 	defer file.Close()
 
 	lineCount := 0
-	minLine := 400
+	targetLine := 400
 	Index4Sum, Index5Sum, Index6Sum, Index7Sum := 0, 0, 0, 0
 
 	r := csv.NewReader(file)
@@ -88,7 +88,7 @@ func parseCsv(filepath string) []string {
 			fmt.Printf("Read file %s failed", filepath)
 		}
 		lineCount += 1
-		if lineCount > minLine {
+		if lineCount > targetLine {
 			break
 		}
 
@@ -98,14 +98,14 @@ func parseCsv(filepath string) []string {
 		Index7Sum += toInt(record[7])
 	}
 
-	if lineCount < minLine {
+	if lineCount < targetLine {
 		return []string{"less than 400 lines"}
 	}
 	return []string{
-		strconv.FormatFloat(float64(Index4Sum)/float64(minLine), 'f', 2, 32),
-		strconv.FormatFloat(float64(Index5Sum)/float64(minLine), 'f', 2, 32),
-		strconv.FormatFloat(float64(Index6Sum)/float64(minLine), 'f', 2, 32),
-		strconv.FormatFloat(float64(Index7Sum)/float64(minLine), 'f', 2, 32),
+		strconv.FormatFloat(float64(Index4Sum)/float64(targetLine), 'f', 2, 32),
+		strconv.FormatFloat(float64(Index5Sum)/float64(targetLine), 'f', 2, 32),
+		strconv.FormatFloat(float64(Index6Sum)/float64(targetLine), 'f', 2, 32),
+		strconv.FormatFloat(float64(Index7Sum)/float64(targetLine), 'f', 2, 32),
 	}
 }
 
