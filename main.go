@@ -20,13 +20,14 @@ func main() {
 	}
 	targetDir := args[0]
 	fmt.Printf("Parse folder %s\n", targetDir)
+
 	files, err := ioutil.ReadDir(targetDir)
 	if err != nil {
 		fmt.Printf("Parse folder err %v", err)
 		return
 	}
 
-	resultStrs := [][]string{}
+	resultCsvStrs := [][]string{}
 	for _, f := range files {
 		if f.IsDir() && strings.HasPrefix(f.Name(), "PAH") {
 			innerFiles, err := ioutil.ReadDir(filepath.Join(targetDir, f.Name()))
@@ -39,7 +40,7 @@ func main() {
 				if strings.HasPrefix(innerFile.Name(), "Cap_") {
 					parseResult := parseCsv(filepath.Join(targetDir, f.Name(), innerFile.Name()))
 					parseResult = append([]string{f.Name()}, parseResult...)
-					resultStrs = append(resultStrs, parseResult)
+					resultCsvStrs = append(resultCsvStrs, parseResult)
 					break
 				}
 			}
@@ -50,15 +51,16 @@ func main() {
 	fmt.Printf("Write to %s...", filepath.Join(targetDir, "result.csv"))
 	resultCsvFile, err := os.Create(filepath.Join(targetDir, "result.csv"))
 	if err != nil {
-		fmt.Printf("Generate resultCsvFile failed %v", err)
+		fmt.Printf("Generate result.csv failed %v", err)
 		return
 	}
 	defer resultCsvFile.Close()
 	w := csv.NewWriter(resultCsvFile)
 	defer w.Flush()
-	for _, record := range resultStrs {
+	for _, record := range resultCsvStrs {
 		if err := w.Write(record); err != nil {
 			fmt.Printf("Write result csv failed.")
+			break
 		}
 	}
 	fmt.Printf("finished\n")
